@@ -8,24 +8,33 @@ jQuery(function ($) {
                 }).catch(function(err) {
                     console.error('MathJax error:', err);
                 });
-            } else {
-                console.warn('MathJax not loaded yet');
             }
         }
 
         var $jax = $content.find('.require-mathjax-support');
         if ($jax.length) {
-            if (!('MathJax' in window)) {
-                var checkMathJax = setInterval(function() {
-                    if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
-                        clearInterval(checkMathJax);
-                        update_math();
-                    }
-                }, 100);
-                
-                setTimeout(function() {
-                    clearInterval(checkMathJax);
-                }, 5000);
+            if (!window.MathJax || typeof MathJax.typesetPromise !== 'function') {
+                $.getScript($jax.attr('data-config'))
+                    .done(function() {
+                        return $.getScript('/static/vnoj/mathjax/3.2.0/es5/tex-chtml.min.js');
+                    })
+                    .done(function() {
+                        console.log('MathJax loaded dynamically');
+
+                        var checkMathJax = setInterval(function() {
+                            if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+                                clearInterval(checkMathJax);
+                                update_math();
+                            }
+                        }, 100);
+                        
+                        setTimeout(function() {
+                            clearInterval(checkMathJax);
+                        }, 5000);
+                    })
+                    .fail(function() {
+                        console.warn('Failed to load MathJax');
+                    });
             } else {
                 update_math();
             }
