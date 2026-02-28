@@ -1,4 +1,6 @@
 jQuery(function ($) {
+    var mathjaxLoading = false;
+    
     $(document).on('martor:preview', function (e, $content) {
         function update_math() {
             if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
@@ -13,30 +15,36 @@ jQuery(function ($) {
 
         var $jax = $content.find('.require-mathjax-support');
         if ($jax.length) {
-            if (!window.MathJax || typeof MathJax.typesetPromise !== 'function') {
+            if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+                update_math();
+            }
+            else if (mathjaxLoading) {
+                var checkMathJax = setInterval(function() {
+                    if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+                        clearInterval(checkMathJax);
+                        update_math();
+                    }
+                }, 100);
+                
+                setTimeout(function() {
+                    clearInterval(checkMathJax);
+                }, 5000);
+            }
+            else {
+                mathjaxLoading = true;
+                
                 $.getScript($jax.attr('data-config'))
                     .done(function() {
                         return $.getScript('/static/vnoj/mathjax/3.2.0/es5/tex-chtml.min.js');
                     })
                     .done(function() {
-                        console.log('MathJax loaded dynamically');
-
-                        var checkMathJax = setInterval(function() {
-                            if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
-                                clearInterval(checkMathJax);
-                                update_math();
-                            }
-                        }, 100);
-                        
-                        setTimeout(function() {
-                            clearInterval(checkMathJax);
-                        }, 5000);
+                        mathjaxLoading = false;
+                        update_math();
                     })
                     .fail(function() {
+                        mathjaxLoading = false;
                         console.warn('Failed to load MathJax');
                     });
-            } else {
-                update_math();
             }
         }
     });
