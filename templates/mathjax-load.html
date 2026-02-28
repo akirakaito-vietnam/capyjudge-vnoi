@@ -1,8 +1,18 @@
 <script type="text/javascript" src="{{ static('mathjax_config.js') }}"></script>
 <script type="text/javascript" src="{{ static('vnoj/mathjax/3.2.0/es5/tex-chtml.min.js') }}"></script>
 <script type="text/javascript">
-    MathJax.typesetPromise().then(function () {
-        $('.tex-image').hide();
-        $('.tex-text').show();
-    });
+    var checkReady = setInterval(function() {
+        if (window.MathJax && typeof MathJax.typesetPromise === 'function' && window.jQuery) {
+            clearInterval(checkReady);
+            
+            MathJax.typesetPromise().then(function() {
+                $(document).ready(function() {
+                    $('.tex-image').hide();
+                    $('.tex-text').show();
+                });
+            }).catch(function(err) {
+                console.error('MathJax error:', err);
+            });
+        }
+    }, 100);
 </script>
