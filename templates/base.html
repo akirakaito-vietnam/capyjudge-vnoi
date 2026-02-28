@@ -76,11 +76,10 @@
     {% if not INLINE_JQUERY %}
         <script src="{{ JQUERY_JS }}"></script>
     {% endif %}
-
+    <script src="
+        https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js
+    "></script>
     {% compress js %}
-        <script src="
-            https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js
-        "></script>
         <script>{{ inlinei18n(LANGUAGE_CODE)|safe }}</script>
         {% if INLINE_JQUERY %}
             <script src="{{ static('libs/jquery-3.4.1.min.js') }}"></script>
