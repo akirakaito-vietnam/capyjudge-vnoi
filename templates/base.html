@@ -209,39 +209,51 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const images = document.querySelectorAll('img:not(#nav-container img):not(.comment-display img)');
-        console.log('ViewerJS: Found', images.length, 'images'); // Debug
+        
         if (images.length > 0) {
-            const viewer = new Viewer(images, {
-                inline: false,
-                button: true,
-                title: false,
-                toolbar: {
-                    zoomIn: 1,
-                    zoomOut: 1,
-                    reset: 1,
-                    rotateLeft: 1,
-                    rotateRight: 1,
-                    prev: false,
-                    next: false,
-                },
-                movable: true,
-                zoomable: true,
-                rotatable: true,
-                scalable: false,
-                transition: true,
-                fullscreen: true,
-                keyboard: true,
-                tooltip: true,
-                minZoomRatio: 0.5,
-                maxZoomRatio: 3,
-                zIndex: 9999,
-                filter: function(image) {
-                    return image.src && !image.src.includes('data:image');
-                }
+            const container = document.createElement('div');
+            container.style.display = 'none';
+            document.body.appendChild(container);
+            
+            images.forEach(img => {
+                container.appendChild(img.cloneNode(true));
             });
-            console.log('ViewerJS: Initialized successfully');
-        } else {
-            console.log('ViewerJS: No images found');
+            
+            try {
+                const viewer = new Viewer(container, {
+                    inline: false,
+                    button: true,
+                    title: false,
+                    toolbar: {
+                        zoomIn: 1,
+                        zoomOut: 1,
+                        reset: 1,
+                        rotateLeft: 1,
+                        rotateRight: 1,
+                        prev: false,
+                        next: false,
+                    },
+                    movable: true,
+                    zoomable: true,
+                    rotatable: true,
+                    scalable: false,
+                    transition: true,
+                    fullscreen: true,
+                    keyboard: true,
+                    tooltip: true,
+                    minZoomRatio: 0.5,
+                    maxZoomRatio: 3,
+                    zIndex: 9999,
+                    ready: function() {
+                        images.forEach((img, index) => {
+                            img.addEventListener('click', () => {
+                                viewer.view(index);
+                            });
+                        });
+                    }
+                });
+            } catch(e) {
+            }
         }
     });
 </script>
