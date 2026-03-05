@@ -203,13 +203,15 @@
             }
         </style>
     </noscript>
-    <!-- viewerjs -->
-    <script src="https://cdn.jsdelivr.net/npm/viewerjs@1.11.7/dist/viewer.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/viewerjs@1.11.7/dist/viewer.min.css" rel="stylesheet">
-    <script>
+<!-- viewerjs -->
+<script src="https://cdn.jsdelivr.net/npm/viewerjs@1.11.7/dist/viewer.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/viewerjs@1.11.7/dist/viewer.min.css" rel="stylesheet">
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
         const images = document.querySelectorAll('img:not(#nav-container img):not(.comment-display img)');
-        images.forEach(image => {
-            const viewer = new Viewer(image, {
+        console.log('ViewerJS: Found', images.length, 'images'); // Debug
+        if (images.length > 0) {
+            const viewer = new Viewer(images, {
                 inline: false,
                 button: true,
                 title: false,
@@ -232,11 +234,18 @@
                 tooltip: true,
                 minZoomRatio: 0.5,
                 maxZoomRatio: 3,
-                zIndex: 9999
+                zIndex: 9999,
+                filter: function(image) {
+                    return image.src && !image.src.includes('data:image');
+                }
             });
-        });
-    </script>
-    <!-- viewerjs -->
+            console.log('ViewerJS: Initialized successfully');
+        } else {
+            console.log('ViewerJS: No images found');
+        }
+    });
+</script>
+<!-- viewerjs -->
 </head>
 <body{% if perms.judge.test_site %} data-theme="{{ SITE_THEME_NAME }}"{% endif %}>
 <svg width="0" height="0" style="display: block">
