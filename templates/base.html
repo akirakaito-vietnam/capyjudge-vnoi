@@ -207,53 +207,42 @@
 <script src="https://cdn.jsdelivr.net/npm/viewerjs@1.11.7/dist/viewer.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/viewerjs@1.11.7/dist/viewer.min.css" rel="stylesheet">
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const images = document.querySelectorAll('img:not(#nav-container img):not(.comment-display img)');
+    $(document).ready(function() {
+        const images = $('img:not(#nav-container img):not(.comment-display img)');
+        console.log('ViewerJS: Found', images.length, 'images');
         
         if (images.length > 0) {
-            const container = document.createElement('div');
-            container.style.display = 'none';
-            document.body.appendChild(container);
-            
-            images.forEach(img => {
-                container.appendChild(img.cloneNode(true));
+            images.each(function() {
+                try {
+                    const viewer = new Viewer(this, {
+                        inline: false,
+                        button: true,
+                        title: false,
+                        toolbar: {
+                            zoomIn: 1,
+                            zoomOut: 1,
+                            reset: 1,
+                            rotateLeft: 1,
+                            rotateRight: 1,
+                            prev: false,
+                            next: false,
+                        },
+                        movable: true,
+                        zoomable: true,
+                        rotatable: true,
+                        scalable: false,
+                        transition: true,
+                        fullscreen: true,
+                        keyboard: true,
+                        tooltip: true,
+                        minZoomRatio: 0.5,
+                        maxZoomRatio: 3,
+                        zIndex: 9999
+                    });
+                } catch(e) {
+                    console.error('ViewerJS Error:', e);
+                }
             });
-            
-            try {
-                const viewer = new Viewer(container, {
-                    inline: false,
-                    button: true,
-                    title: false,
-                    toolbar: {
-                        zoomIn: 1,
-                        zoomOut: 1,
-                        reset: 1,
-                        rotateLeft: 1,
-                        rotateRight: 1,
-                        prev: false,
-                        next: false,
-                    },
-                    movable: true,
-                    zoomable: true,
-                    rotatable: true,
-                    scalable: false,
-                    transition: true,
-                    fullscreen: true,
-                    keyboard: true,
-                    tooltip: true,
-                    minZoomRatio: 0.5,
-                    maxZoomRatio: 3,
-                    zIndex: 9999,
-                    ready: function() {
-                        images.forEach((img, index) => {
-                            img.addEventListener('click', () => {
-                                viewer.view(index);
-                            });
-                        });
-                    }
-                });
-            } catch(e) {
-            }
         }
     });
 </script>
