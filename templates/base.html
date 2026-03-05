@@ -209,7 +209,6 @@
 <script>
     $(document).ready(function() {
         const images = $('img:not(#nav-container img):not(.comment-display img)');
-        console.log('ViewerJS: Found', images.length, 'images');
         
         if (images.length > 0) {
             images.each(function() {
@@ -224,9 +223,10 @@
                             reset: 1,
                             rotateLeft: 1,
                             rotateRight: 1,
-                            prev: false,
-                            next: false,
+                            prev: 0,
+                            next: 0,
                         },
+                        navbar: false,
                         movable: true,
                         zoomable: true,
                         rotatable: true,
