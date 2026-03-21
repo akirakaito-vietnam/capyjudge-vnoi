@@ -148,7 +148,7 @@ class SubmissionAdmin(VersionAdmin):
         return queryset
 
     def has_add_permission(self, request):
-        return False
+        return super().has_add_permission(request)
 
     def has_change_permission(self, request, obj=None):
         if not request.user.has_perm('judge.edit_own_problem'):
